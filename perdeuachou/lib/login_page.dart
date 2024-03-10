@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   bool _verSenha = false;
+  bool _entrar = true;
 
   @override
   Widget build(BuildContext context) {
@@ -71,13 +72,60 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 12,
                 ),
+                Visibility(
+                  visible: !_entrar,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                          keyboardType: TextInputType.visiblePassword,
+                          obscureText: !_verSenha,
+                          controller: _senhaController,
+                          decoration: const InputDecoration(
+                            label: Text('Senha'),
+                            hintText: 'Digite novamente sua senha',
+                          ),
+                          validator: (senha) {
+                            if (senha == null || senha.isEmpty) {
+                              return 'Digite sua senha';
+                            } else if (senha.length < 6) {
+                              return 'Digite uma senha mais forte';
+                            }
+                            return null;
+                          }),
+                      TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          label: Text('Nome'),
+                          hintText: 'Nome',
+                        ),
+                        validator: (email) {
+                          if (email == null || email.isEmpty) {
+                            return 'Digite seu Nome';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
                 ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         logar();
                       }
                     },
-                    child: const Text('ENTRAR'))
+                    child: Text((_entrar) ? 'Entrar' : 'Cadastrar')),
+                const Divider(),
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _entrar = !_entrar;
+                      });
+                    },
+                    child: Text((_entrar)
+                        ? "Ainda não tem uma conta? Cadastre-se!"
+                        : 'Já tem uma conta? Entre!')),
               ],
             ),
           ),
