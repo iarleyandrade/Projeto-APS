@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:perdeuachou/home_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:perdeuachou/core/my_snackbar.dart';
+import 'package:perdeuachou/servicos/autenticacao_servico.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,9 +13,11 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
+  final _nomeController = TextEditingController();
   bool _verSenha = false;
   bool _entrar = true;
 
+  final AutenticacaoServico _authServico = AutenticacaoServico();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +38,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   validator: (email) {
                     if (email == null || email.isEmpty) {
-                      return 'Digite seu E-mail';
+                      return 'Digite seu e-mail';
+                    }
+                    if (!email.contains("@")) {
+                      return "Email invalido";
                     }
                     return null;
                   },
@@ -77,24 +79,8 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       TextFormField(
-                          keyboardType: TextInputType.visiblePassword,
-                          obscureText: !_verSenha,
-                          controller: _senhaController,
-                          decoration: const InputDecoration(
-                            label: Text('Senha'),
-                            hintText: 'Digite novamente sua senha',
-                          ),
-                          validator: (senha) {
-                            if (senha == null || senha.isEmpty) {
-                              return 'Digite sua senha';
-                            } else if (senha.length < 6) {
-                              return 'Digite uma senha mais forte';
-                            }
-                            return null;
-                          }),
-                      TextFormField(
                         keyboardType: TextInputType.emailAddress,
-                        controller: _emailController,
+                        controller: _nomeController,
                         decoration: const InputDecoration(
                           label: Text('Nome'),
                           hintText: 'Nome',
@@ -109,11 +95,12 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
+                const SizedBox(
+                  height: 16,
+                ),
                 ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        logar();
-                      }
+                      botaoPrincipalClicado();
                     },
                     child: Text((_entrar) ? 'Entrar' : 'Cadastrar')),
                 const Divider(),
@@ -134,26 +121,31 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  logar() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
-    var url = Uri.parse('servidor');
-    var response = await http.post(url, body: {
-      'login': _emailController.text,
-      'password': _senhaController.text,
-    });
+  botaoPrincipalClicado() {
+    String email = _emailController.text;
+    String senha = _senhaController.text;
+    String nome = _nomeController.text;
 
-    if (response.statusCode == 200) {
-      String token = json.decode(response.body)['token'];
-      await sharedPreferences.setString('token', 'Token $token');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.redAccent,
-          content: Text(
-            'E-mail ou Senha inválidos',
-          )));
+    if (_formKey.currentState!.validate()) {
+      if (_entrar) {
+        _authServico.logarUsuario(email: email, senha: senha).then(
+          (String? erro) {
+            if (erro != null) {
+              showSnackBar(context: context, text: erro);
+            }
+          },
+        );
+      } else {
+        _authServico
+            .cadastrarUsuario(nome: nome, senha: senha, email: email)
+            .then(
+          (String? erro) {
+            if (erro != null) {
+              showSnackBar(context: context, text: erro);
+            }
+          },
+        );
+      }
     }
   }
 }

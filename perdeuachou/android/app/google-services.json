@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "149568471098",
+    "project_id": "perdeuachou-d67a9",
+    "storage_bucket": "perdeuachou-d67a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149568471098:android:24290ac1a8e54ae3b87503",
+        "android_client_info": {
+          "package_name": "com.example.perdeuachou"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxBHlVm2fv0hFxJ_tE09AkeFPhdPBnaRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
