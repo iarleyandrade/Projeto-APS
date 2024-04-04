@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:perdeuachou/servicos/autenticacao_servico.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: public_member_api_docs, avoid_print
 
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:flutter/material.dart";
+import "package:perdeuachou/servicos/autenticacao_servico.dart";
+
+// ignore: duplicate_ignore
+// ignore: public_member_api_docs
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -11,85 +14,82 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? itemName, itemDescricao, itemLocal;
+  String? itemName;
+  String? itemDescricao;
+  String? itemLocal;
 
-  setItemName(name) {
-    itemName = name;
-  }
+  dynamic setItemName(String name) => itemName = name;
 
-  setItemDescricao(descricao) {
-    itemDescricao = descricao;
-  }
+  dynamic setItemDescricao(String descricao) => itemDescricao = descricao;
 
-  setItemLocal(local) {
-    itemLocal = local;
-  }
+  dynamic setItemLocal(String local) => itemLocal = local;
 
-  createItem() {
-    DocumentReference documentReference =
+  dynamic createItem() {
+    final DocumentReference<Map<String, dynamic>> documentReference =
         FirebaseFirestore.instance.collection("MyItens").doc(itemName);
 
-    Map<String, dynamic> itens = {
+    final Map<String, dynamic> itens = <String, String?>{
       "itemName": itemName,
       "itemDescricao": itemDescricao,
-      "itemLocal": itemLocal
+      "itemLocal": itemLocal,
     } as Map<String, dynamic>;
 
     documentReference.set(itens).whenComplete(() {});
   }
 
-  updateItem() {
-    DocumentReference documentReference =
+  dynamic updateItem() {
+    final DocumentReference<Map<String, dynamic>> documentReference =
         FirebaseFirestore.instance.collection("MyItens").doc(itemName);
 
-    Map<String, dynamic> itens = {
+    final Map<String, dynamic> itens = <String, String?>{
       "itemName": itemName,
       "itemDescricao": itemDescricao,
-      "itemLocal": itemLocal
+      "itemLocal": itemLocal,
     } as Map<String, dynamic>;
 
     documentReference.set(itens).whenComplete(() {});
   }
 
-  readItem() {
-    DocumentReference documentReference =
+  dynamic readItem() {
+    final DocumentReference<Map<String, dynamic>> documentReference =
         FirebaseFirestore.instance.collection("MyItens").doc(itemName);
 
-    documentReference.get().then((datasnapshot) {
+    documentReference
+        .get()
+        .then((DocumentSnapshot<Map<String, dynamic>> datasnapshot) {
       print(datasnapshot.data());
     });
   }
 
-  deleteItem() {
-    DocumentReference documentReference =
+  dynamic deleteItem() {
+    final DocumentReference<Map<String, dynamic>> documentReference =
         FirebaseFirestore.instance.collection("MyItens").doc(itemName);
 
-    documentReference.delete().whenComplete(() => print('$itemName deletado'));
+    documentReference.delete().whenComplete(() => print("$itemName deletado"));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perdeu ou Achou?'),
+        title: const Text("Perdeu ou Achou?"),
       ),
       drawer: Drawer(
         child: ListView(
-          children: [
+          children: <Widget>[
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text("Deslogar"),
               onTap: () {
                 AutenticacaoServico().deslogarUsuario();
               },
-            )
+            ),
           ],
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
@@ -138,13 +138,15 @@ class _HomePageState extends State<HomePage> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+              children: <Widget>[
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16))),
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
                   child: const Text("Cadastrar"),
                   onPressed: () {
                     createItem();
@@ -152,10 +154,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16))),
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
                   child: const Text("Ler"),
                   onPressed: () {
                     readItem();
@@ -163,10 +167,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16))),
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
                   child: const Text("Atualizar"),
                   onPressed: () {
                     updateItem();
@@ -174,10 +180,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16))),
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
                   child: const Text("Apagar"),
                   onPressed: () {
                     deleteItem();
@@ -190,7 +198,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const Row(
               textDirection: TextDirection.ltr,
-              children: [
+              children: <Widget>[
                 Expanded(child: Text("Name")),
                 Expanded(child: Text("Descricao")),
                 Expanded(child: Text("Onde foi perdido")),
@@ -199,38 +207,47 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 8,
             ),
+            // ignore: always_specify_types
             StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("MyItens")
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data?.docs.length,
-                        itemBuilder: (context, index) {
-                          DocumentSnapshot documentSnapshot = snapshot
-                              .data?.docs[index] as DocumentSnapshot<Object?>;
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: Text(documentSnapshot["itemName"]),
-                              ),
-                              Expanded(
-                                child: Text(documentSnapshot["itemDescricao"]),
-                              ),
-                              Expanded(
-                                child: Text(documentSnapshot["itemLocal"]),
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                  return const Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: CircularProgressIndicator(),
+              stream:
+                  FirebaseFirestore.instance.collection("MyItens").snapshots(),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
+              ) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data?.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final DocumentSnapshot<Object?> documentSnapshot =
+                          snapshot.data!.docs[index]
+                              as DocumentSnapshot<Object?>;
+                      return Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(documentSnapshot["itemName"] as String),
+                          ),
+                          Expanded(
+                            child: Text(
+                              documentSnapshot["itemDescricao"] as String,
+                            ),
+                          ),
+                          Expanded(
+                            child:
+                                Text(documentSnapshot["itemLocal"] as String),
+                          ),
+                        ],
+                      );
+                    },
                   );
-                })
+                }
+                return const Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
           ],
         ),
       ),

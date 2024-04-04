@@ -1,4 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: public_member_api_docs, unnecessary_statements
+
+import "package:firebase_auth/firebase_auth.dart";
 
 class AutenticacaoServico {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -9,7 +11,7 @@ class AutenticacaoServico {
     required String email,
   }) async {
     try {
-      UserCredential userCredential =
+      final UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: senha,
@@ -25,8 +27,10 @@ class AutenticacaoServico {
     }
   }
 
-  Future<String?> logarUsuario(
-      {required String email, required String senha}) async {
+  Future<String?> logarUsuario({
+    required String email,
+    required String senha,
+  }) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
         email: email,

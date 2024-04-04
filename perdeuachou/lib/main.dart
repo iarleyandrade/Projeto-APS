@@ -1,9 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:perdeuachou/home_page.dart';
-import 'package:perdeuachou/login_page.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+// ignore_for_file: public_member_api_docs
+
+import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_core/firebase_core.dart";
+import "package:flutter/material.dart";
+import "package:perdeuachou/firebase_options.dart";
+import "package:perdeuachou/home_page.dart";
+import "package:perdeuachou/login_page.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +34,7 @@ class RoteadorTela extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.userChanges(),
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.hasData) {
           return const HomePage();
         } else {
