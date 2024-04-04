@@ -2,7 +2,9 @@
 
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
+import "package:perdeuachou/models/Item.dart";
 import "package:perdeuachou/servicos/autenticacao_servico.dart";
+import "package:perdeuachou/servicos/item_servico.dart";
 
 // ignore: duplicate_ignore
 // ignore: public_member_api_docs
@@ -23,50 +25,6 @@ class _HomePageState extends State<HomePage> {
   dynamic setItemDescricao(String descricao) => itemDescricao = descricao;
 
   dynamic setItemLocal(String local) => itemLocal = local;
-
-  dynamic createItem() {
-    final DocumentReference<Map<String, dynamic>> documentReference =
-        FirebaseFirestore.instance.collection("MyItens").doc(itemName);
-
-    final Map<String, dynamic> itens = <String, String?>{
-      "itemName": itemName,
-      "itemDescricao": itemDescricao,
-      "itemLocal": itemLocal,
-    } as Map<String, dynamic>;
-
-    documentReference.set(itens).whenComplete(() {});
-  }
-
-  dynamic updateItem() {
-    final DocumentReference<Map<String, dynamic>> documentReference =
-        FirebaseFirestore.instance.collection("MyItens").doc(itemName);
-
-    final Map<String, dynamic> itens = <String, String?>{
-      "itemName": itemName,
-      "itemDescricao": itemDescricao,
-      "itemLocal": itemLocal,
-    } as Map<String, dynamic>;
-
-    documentReference.set(itens).whenComplete(() {});
-  }
-
-  dynamic readItem() {
-    final DocumentReference<Map<String, dynamic>> documentReference =
-        FirebaseFirestore.instance.collection("MyItens").doc(itemName);
-
-    documentReference
-        .get()
-        .then((DocumentSnapshot<Map<String, dynamic>> datasnapshot) {
-      print(datasnapshot.data());
-    });
-  }
-
-  dynamic deleteItem() {
-    final DocumentReference<Map<String, dynamic>> documentReference =
-        FirebaseFirestore.instance.collection("MyItens").doc(itemName);
-
-    documentReference.delete().whenComplete(() => print("$itemName deletado"));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +107,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: const Text("Cadastrar"),
                   onPressed: () {
-                    createItem();
+                    ItemServico().addItem(
+                      Item(
+                        name: itemName!,
+                        descricao: itemDescricao!,
+                        local: itemLocal!,
+                        id: itemName!,
+                      ),
+                    );
                   },
                 ),
                 ElevatedButton(
@@ -162,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: const Text("Ler"),
                   onPressed: () {
-                    readItem();
+                    ItemServico().getItems();
                   },
                 ),
                 ElevatedButton(
@@ -175,7 +140,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: const Text("Atualizar"),
                   onPressed: () {
-                    updateItem();
+                    ItemServico().updateItem(
+                      itemName!,
+                      Item(
+                        name: itemName!,
+                        descricao: itemDescricao!,
+                        local: itemLocal!,
+                        id: itemName!,
+                      ),
+                    );
                   },
                 ),
                 ElevatedButton(
@@ -188,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: const Text("Apagar"),
                   onPressed: () {
-                    deleteItem();
+                    ItemServico().deleteItem(itemName!);
                   },
                 ),
               ],
@@ -226,16 +199,15 @@ class _HomePageState extends State<HomePage> {
                       return Row(
                         children: <Widget>[
                           Expanded(
-                            child: Text(documentSnapshot["itemName"] as String),
+                            child: Text(documentSnapshot["name"] as String),
                           ),
                           Expanded(
                             child: Text(
-                              documentSnapshot["itemDescricao"] as String,
+                              documentSnapshot["descricao"] as String,
                             ),
                           ),
                           Expanded(
-                            child:
-                                Text(documentSnapshot["itemLocal"] as String),
+                            child: Text(documentSnapshot["local"] as String),
                           ),
                         ],
                       );
