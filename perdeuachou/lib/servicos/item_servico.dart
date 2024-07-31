@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, always_specify_types
 
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_core/firebase_core.dart";
@@ -11,6 +11,10 @@ class ItemServico {
 
   final CollectionReference<Map<String, dynamic>> _itemsCollection =
       FirebaseFirestore.instance.collection("MyItens");
+
+  Future<Stream<QuerySnapshot>> getItemDetails() async {
+    return FirebaseFirestore.instance.collection("MyItens").snapshots();
+  }
 
   Future<void> addItem(Item item) async {
     await _itemsCollection.add(item.toJson());
@@ -27,8 +31,11 @@ class ItemServico {
         .toList();
   }
 
-  Future<void> updateItem(String itemId, Item newItem) async {
-    await _itemsCollection.doc(itemId).update(newItem.toJson());
+  Future<void> updateItem(String id, Map<String, dynamic> uptadeInfo) async {
+    return await FirebaseFirestore.instance
+        .collection("MyItens")
+        .doc(id)
+        .update(uptadeInfo);
   }
 
   Future<void> deleteItem(String itemId) async {

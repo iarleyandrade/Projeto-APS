@@ -2,30 +2,31 @@
 
 class Item {
   Item({
-    required this.id,
-    required this.name,
-    required this.descricao,
-    required this.local,
+    required this.itemName,
+    required this.itemDescricao,
+    required this.itemLocal,
+    required this.itemId,
   });
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
-      name: json["name"] as String,
-      descricao: json["descricao"] as String,
-      local: json["local"] as String,
-      id: "",
+      itemName: json["itemName"] as String,
+      itemDescricao: json["itemDescricao"] as String,
+      itemLocal: json["itemLocal"] as String,
+      itemId: json["itemId"] as String,
     );
   }
-  String id;
-  String name;
-  String descricao;
-  String local;
+  String itemName;
+  String itemDescricao;
+  String itemLocal;
+  String itemId;
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      "name": name,
-      "descricao": descricao,
-      "local": local,
+    return <String, String>{
+      "itemName": itemName,
+      "itemDescricao": itemDescricao,
+      "itemLocal": itemLocal,
+      "itemId": itemId,
     };
   }
 }
