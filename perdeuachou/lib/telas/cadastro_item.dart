@@ -124,28 +124,32 @@ class _cadastroItemState extends State<cadastroItem> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  ItemServico()
-                      .addItem(
-                        Item(
-                          itemName: namecontroller.text,
-                          itemDescricao: descricaocontroller.text,
-                          itemLocal: localcontroller.text,
-                          itemId: randomAlphaNumeric(10),
-                        ),
-                      )
+                onPressed: () async {
+                  final String id = randomAlphaNumeric(10);
+
+                  await ItemServico()
+                      .addItemDetails(
+                    Item(
+                      itemName: namecontroller.text,
+                      itemDescricao: descricaocontroller.text,
+                      itemLocal: localcontroller.text,
+                      itemId: id,
+                    ),
+                    id,
+                  )
                       .then(
-                        (value) => <Future<bool?>>{
-                          Fluttertoast.showToast(
-                            msg: "produto cadastrado com sucesso!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          ),
-                        },
+                    (value) {
+                      Fluttertoast.showToast(
+                        msg: "produto cadastrado com sucesso!",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        backgroundColor: Colors.green,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
                       );
+                      Navigator.pop(context);
+                    },
+                  );
                 },
                 child: const Text(
                   "Cadastrar",

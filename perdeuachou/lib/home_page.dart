@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 227, 225, 225),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

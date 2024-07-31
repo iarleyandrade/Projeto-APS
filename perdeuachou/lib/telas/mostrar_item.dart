@@ -3,6 +3,7 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:flutter/widgets.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:path/path.dart";
 import "package:perdeuachou/servicos/item_servico.dart";
@@ -59,16 +60,16 @@ class _mostrarItemState extends State<mostrarItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "Name: ${ds["itemName"] as String}",
                                   style: const TextStyle(
-                                    color: Colors.blue,
+                                    color: Color.fromARGB(255, 59, 57, 57),
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                const Spacer(),
                                 GestureDetector(
                                   onTap: () {
                                     namecontroller.text =
@@ -84,15 +85,38 @@ class _mostrarItemState extends State<mostrarItem> {
                                   },
                                   child: const Icon(
                                     Icons.edit,
-                                    color: Colors.black,
+                                    color: Color.fromARGB(255, 59, 57, 57),
                                   ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                GestureDetector(
+                                  child: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onTap: () async {
+                                    await ItemServico()
+                                        .deleteItem(ds["itemId"] as String)
+                                        .then((value) {
+                                      Fluttertoast.showToast(
+                                        msg: "Item deletado com sucesso",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        backgroundColor: Colors.green,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0,
+                                      );
+                                    });
+                                  },
                                 ),
                               ],
                             ),
                             Text(
                               "Local: ${ds["itemLocal"] as String}",
                               style: const TextStyle(
-                                color: Colors.orange,
+                                color: Color.fromARGB(255, 59, 57, 57),
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -100,7 +124,7 @@ class _mostrarItemState extends State<mostrarItem> {
                             Text(
                               "Descrição: ${ds["itemDescricao"] as String}",
                               style: const TextStyle(
-                                color: Colors.blue,
+                                color: Color.fromARGB(255, 59, 57, 57),
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -226,7 +250,6 @@ class _mostrarItemState extends State<mostrarItem> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
-                      print("botao apertado");
                       final Map<String, dynamic> updateInfo = {
                         "itemName": namecontroller.text,
                         "itemId": id,
@@ -236,7 +259,6 @@ class _mostrarItemState extends State<mostrarItem> {
                       await ItemServico()
                           .updateItem(id, updateInfo)
                           .then((value) {
-                        print("atualizado");
                         Fluttertoast.showToast(
                           msg: "Item atualizado com sucesso",
                           toastLength: Toast.LENGTH_SHORT,

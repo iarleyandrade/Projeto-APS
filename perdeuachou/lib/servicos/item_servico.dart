@@ -20,6 +20,13 @@ class ItemServico {
     await _itemsCollection.add(item.toJson());
   }
 
+  Future addItemDetails(Item item, String id) async {
+    return FirebaseFirestore.instance
+        .collection("MyItens")
+        .doc(id)
+        .set(item.toJson());
+  }
+
   Future<List<Item>> getItems() async {
     final QuerySnapshot<Map<String, dynamic>> snapshot =
         await _itemsCollection.get();
