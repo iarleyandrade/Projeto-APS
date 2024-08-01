@@ -4,8 +4,8 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
 import "package:perdeuachou/firebase_options.dart";
-import "package:perdeuachou/home_page.dart";
-import "package:perdeuachou/login_page.dart";
+import "package:perdeuachou/telas/home_page.dart";
+import "package:perdeuachou/telas/login_page.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

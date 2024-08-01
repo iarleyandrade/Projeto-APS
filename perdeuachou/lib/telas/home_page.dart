@@ -1,11 +1,10 @@
 // ignore_for_file: public_member_api_docs, avoid_print, always_specify_types
 
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 import "package:perdeuachou/servicos/autenticacao_servico.dart";
 import "package:perdeuachou/telas/cadastro_item.dart";
 import "package:perdeuachou/telas/mostrar_item.dart";
+import "package:perdeuachou/telas/mostrar_local.dart";
 
 // ignore: duplicate_ignore
 // ignore: public_member_api_docs
@@ -71,6 +70,18 @@ class _HomePageState extends State<HomePage> {
               title: const Text("Deslogar"),
               onTap: () {
                 AutenticacaoServico().deslogarUsuario();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.home_work_outlined),
+              title: const Text("Ver Locais"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => const MostrarLocal(),
+                  ),
+                );
               },
             ),
           ],

@@ -16,10 +16,6 @@ class ItemServico {
     return FirebaseFirestore.instance.collection("MyItens").snapshots();
   }
 
-  Future<void> addItem(Item item) async {
-    await _itemsCollection.add(item.toJson());
-  }
-
   Future addItemDetails(Item item, String id) async {
     return FirebaseFirestore.instance
         .collection("MyItens")

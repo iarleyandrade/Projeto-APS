@@ -1,11 +1,8 @@
 // ignore_for_file: public_member_api_docs, camel_case_types, always_specify_types, avoid_dynamic_calls, type_annotate_public_apis, always_declare_return_types
 
 import "package:cloud_firestore/cloud_firestore.dart";
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 import "package:fluttertoast/fluttertoast.dart";
-import "package:path/path.dart";
 import "package:perdeuachou/servicos/item_servico.dart";
 
 class mostrarItem extends StatefulWidget {
