@@ -14,6 +14,12 @@ class mostrarItem extends StatefulWidget {
 
 class _mostrarItemState extends State<mostrarItem> {
   Stream? itemStream;
+  String selectedLocal = "0";
+  String localName = "Null";
+
+  setLocalName(String local) {
+    localName = local;
+  }
 
   TextEditingController namecontroller = TextEditingController();
   TextEditingController localcontroller = TextEditingController();
@@ -73,11 +79,13 @@ class _mostrarItemState extends State<mostrarItem> {
                                         ds["itemName"] as String;
                                     localcontroller.text =
                                         ds["itemLocal"] as String;
+
                                     descricaocontroller.text =
                                         ds["itemDescricao"] as String;
                                     editItemDetail(
                                       ds["itemId"] as String,
                                       context,
+                                      localcontroller.text,
                                     );
                                   },
                                   child: const Icon(
@@ -142,9 +150,13 @@ class _mostrarItemState extends State<mostrarItem> {
     );
   }
 
-  Future editItemDetail(String id, BuildContext context) => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
+  Future editItemDetail(String id, BuildContext context, String local) {
+    String selectedLocal = local;
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
           content: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,9 +169,7 @@ class _mostrarItemState extends State<mostrarItem> {
                       },
                       child: const Icon(Icons.cancel),
                     ),
-                    const SizedBox(
-                      width: 60,
-                    ),
+                    const SizedBox(width: 60),
                     const Text(
                       "Editar",
                       style: TextStyle(
@@ -178,16 +188,12 @@ class _mostrarItemState extends State<mostrarItem> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  width: 20,
-                ),
+                const SizedBox(height: 20),
                 const Text(
                   "Nome",
                   style: TextStyle(color: Colors.black, fontSize: 20.0),
                 ),
-                const SizedBox(
-                  height: 10.0,
-                ),
+                const SizedBox(height: 10.0),
                 Container(
                   padding: const EdgeInsets.only(left: 10),
                   decoration: BoxDecoration(
@@ -199,37 +205,77 @@ class _mostrarItemState extends State<mostrarItem> {
                     decoration: const InputDecoration(border: InputBorder.none),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 const Text(
                   "Local",
                   style: TextStyle(color: Colors.black, fontSize: 20.0),
                 ),
-                const SizedBox(
-                  height: 10.0,
+                const SizedBox(height: 10.0),
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("Local")
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      final clients = snapshot.data?.docs.reversed.toList();
+
+                      return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          final List<DropdownMenuItem<String>> clientLocais = [
+                            DropdownMenuItem(
+                              value: local,
+                              child: Text(local),
+                            ),
+                          ];
+
+                          if (clients != null) {
+                            for (final client in clients) {
+                              clientLocais.add(
+                                DropdownMenuItem(
+                                  value: client.id,
+                                  child: Text(client["localName"] as String),
+                                ),
+                              );
+                            }
+                          }
+
+                          return DropdownButton<String>(
+                            items: clientLocais,
+                            onTap: () {
+                              setState(() {
+                                clientLocais[0] = const DropdownMenuItem(
+                                  child: Text("Selecione o Local"),
+                                );
+                              });
+                            },
+                            onChanged: (clientValue) {
+                              setState(() {
+                                selectedLocal = clientValue!;
+                                final selectedClient =
+                                    snapshot.data?.docs.firstWhere(
+                                  (client) => client.id == clientValue,
+                                );
+                                localName =
+                                    selectedClient?["localName"] as String;
+                                localcontroller.text =
+                                    selectedClient?["localName"] as String;
+                              });
+                            },
+                            value: selectedLocal,
+                          );
+                        },
+                      );
+                    }
+                  },
                 ),
-                Container(
-                  padding: const EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextField(
-                    controller: localcontroller,
-                    decoration: const InputDecoration(border: InputBorder.none),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 15),
                 const Text(
                   "Descrição",
                   style: TextStyle(color: Colors.black, fontSize: 20.0),
                 ),
-                const SizedBox(
-                  height: 10.0,
-                ),
+                const SizedBox(height: 10.0),
                 Container(
                   padding: const EdgeInsets.only(left: 10),
                   decoration: BoxDecoration(
@@ -241,9 +287,7 @@ class _mostrarItemState extends State<mostrarItem> {
                     decoration: const InputDecoration(border: InputBorder.none),
                   ),
                 ),
-                const SizedBox(
-                  height: 30,
-                ),
+                const SizedBox(height: 30),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -273,6 +317,8 @@ class _mostrarItemState extends State<mostrarItem> {
               ],
             ),
           ),
-        ),
-      );
+        );
+      },
+    );
+  }
 }

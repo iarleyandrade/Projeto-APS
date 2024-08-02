@@ -116,6 +116,7 @@ class _cadastroItemState extends State<cadastroItem> {
                     );
                   }
                 }
+
                 return DropdownButton(
                   items: clientLocais,
                   onChanged: (clientValue) {
@@ -130,17 +131,6 @@ class _cadastroItemState extends State<cadastroItem> {
                   value: selectedLocal,
                 );
               },
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 10),
-              decoration: BoxDecoration(
-                border: Border.all(),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: TextField(
-                controller: localcontroller,
-                decoration: const InputDecoration(border: InputBorder.none),
-              ),
             ),
             const SizedBox(
               height: 20,
