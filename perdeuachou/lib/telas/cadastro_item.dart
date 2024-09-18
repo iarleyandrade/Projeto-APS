@@ -1,13 +1,12 @@
-// ignore_for_file: public_member_api_docs, camel_case_types, always_specify_types
+// ignore_for_file: public_member_api_docs, camel_case_types, always_specify_types, avoid_print
 
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
-import "package:perdeuachou/core/drop_dawn_local.dart";
 import "package:perdeuachou/models/Item.dart";
 import "package:perdeuachou/servicos/item_servico.dart";
-import "package:perdeuachou/servicos/local_servico.dart";
 import "package:random_string/random_string.dart";
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class cadastroItem extends StatefulWidget {
   const cadastroItem({super.key});
@@ -32,6 +31,18 @@ class _cadastroItemState extends State<cadastroItem> {
   dynamic setItemDescricao(String descricao) => itemDescricao = descricao;
 
   dynamic setItemLocal(String local) => itemLocal = local;
+
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _speechText = '';
+  double _confidence = 1.0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _speech = stt.SpeechToText();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +90,21 @@ class _cadastroItemState extends State<cadastroItem> {
               ),
               child: TextField(
                 controller: namecontroller,
-                decoration: const InputDecoration(border: InputBorder.none),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  suffixIcon: IconButton(
+                    onPressed: () async {
+                      try {
+                        String recognizedText = await _listen();
+                        namecontroller.text = recognizedText;
+                        recognizedText = "";
+                      } catch (error) {
+                        print("Error listening: $error");
+                      }
+                    },
+                    icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
@@ -150,7 +175,21 @@ class _cadastroItemState extends State<cadastroItem> {
               ),
               child: TextField(
                 controller: descricaocontroller,
-                decoration: const InputDecoration(border: InputBorder.none),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  suffixIcon: IconButton(
+                    onPressed: () async {
+                      try {
+                        String recognizedText = await _listen();
+                        descricaocontroller.text = recognizedText;
+                        recognizedText = "";
+                      } catch (error) {
+                        print("Error listening: $error");
+                      }
+                    },
+                    icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
@@ -195,5 +234,30 @@ class _cadastroItemState extends State<cadastroItem> {
         ),
       ),
     );
+  }
+
+  Future<String> _listen() async {
+    if (!_isListening) {
+      final bool available = await _speech.initialize(
+        onStatus: (val) => print("onStatus: $val"),
+        onError: (val) => print("onError: $val"),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            _speechText = val.recognizedWords;
+            if (val.hasConfidenceRating && val.confidence > 0) {
+              _confidence = val.confidence;
+            }
+          }),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
+
+    return _speechText;
   }
 }

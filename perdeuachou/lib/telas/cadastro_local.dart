@@ -1,10 +1,11 @@
-// ignore_for_file: public_member_api_docs, camel_case_types, always_specify_types
+// ignore_for_file: public_member_api_docs, camel_case_types, always_specify_types, avoid_print
 
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:perdeuachou/models/local.dart";
 import "package:perdeuachou/servicos/local_servico.dart";
 import "package:random_string/random_string.dart";
+import "package:speech_to_text/speech_to_text.dart" as stt;
 
 class cadastroLocal extends StatefulWidget {
   const cadastroLocal({super.key});
@@ -19,6 +20,18 @@ class _cadastroLocalState extends State<cadastroLocal> {
 
   TextEditingController namecontroller = TextEditingController();
   TextEditingController descricaocontroller = TextEditingController();
+
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _speechText = '';
+  double _confidence = 1.0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _speech = stt.SpeechToText();
+  }
 
   dynamic setLocalName(String name) => localName = name;
 
@@ -70,7 +83,20 @@ class _cadastroLocalState extends State<cadastroLocal> {
               ),
               child: TextField(
                 controller: namecontroller,
-                decoration: const InputDecoration(border: InputBorder.none),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  suffixIcon: IconButton(
+                    onPressed: () async {
+                      try {
+                        final String recognizedText = await _listen();
+                        namecontroller.text = recognizedText;
+                      } catch (error) {
+                        print("Error listening: $error");
+                      }
+                    },
+                    icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
@@ -91,7 +117,20 @@ class _cadastroLocalState extends State<cadastroLocal> {
               ),
               child: TextField(
                 controller: descricaocontroller,
-                decoration: const InputDecoration(border: InputBorder.none),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  suffixIcon: IconButton(
+                    onPressed: () async {
+                      try {
+                        final String recognizedText = await _listen();
+                        descricaocontroller.text = recognizedText;
+                      } catch (error) {
+                        print("Error listening: $error");
+                      }
+                    },
+                    icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
@@ -135,5 +174,30 @@ class _cadastroLocalState extends State<cadastroLocal> {
         ),
       ),
     );
+  }
+
+  Future<String> _listen() async {
+    if (!_isListening) {
+      final bool available = await _speech.initialize(
+        onStatus: (val) => print("onStatus: $val"),
+        onError: (val) => print("onError: $val"),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            _speechText = val.recognizedWords;
+            if (val.hasConfidenceRating && val.confidence > 0) {
+              _confidence = val.confidence;
+            }
+          }),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
+
+    return _speechText;
   }
 }
